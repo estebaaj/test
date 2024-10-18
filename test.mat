@@ -1,0 +1,25 @@
+
+numEvents = length(pks); 
+dataset = table(); 
+
+
+for i = 1:numEvents
+    eventWindow = locs(i) - 0.5 * Fs : locs(i) + 0.5 * Fs; 
+    if eventWindow(1) > 0 && eventWindow(end) <= length(filteredSignal) 
+        segment = filteredSignal(eventWindow);
+        
+        meanAmplitude = mean(segment);
+        stdAmplitude = std(segment);
+        peakAmplitude = pks(i);
+        duration = length(segment) / Fs; 
+        
+        dataset = [dataset; table(meanAmplitude, stdAmplitude, peakAmplitude, duration, 'VariableNames', {'MeanAmplitude', 'StdAmplitude', 'PeakAmplitude', 'Duration'})];
+    end
+end
+
+labels = ones(numEvents, 1); 
+dataset.Labels = labels; 
+
+save('pHFO_Dataset.mat', 'dataset');  
+
+disp('Dataset created and saved successfully.');
